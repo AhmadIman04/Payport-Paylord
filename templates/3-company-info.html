@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Company Information - Merchant Registration</title>
+    <!-- ... Same head content as other pages ... -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --brand-pink: #D70F64; --brand-dark-pink: #B30C52; }
+        body { font-family: 'Inter', sans-serif; }
+        input:focus, textarea:focus, select:focus { --tw-ring-color: var(--brand-pink); border-color: var(--brand-pink); }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen" data-page="3">
+    <div class="max-w-4xl mx-auto p-4 sm:p-8 my-10">
+        <!-- ... Same Header and Progress Bar as other pages ... -->
+        <header class="text-center mb-10"><img src="/static/food_panda_logo.png" alt="Food Panda Logo" class="h-16 mx-auto mb-4"><h1 class="text-3xl font-bold text-gray-800">Merchant Registration</h1></header>
+        <div class="flex items-center justify-center rounded-lg p-2 mb-10 text-xs sm:text-sm"><div class="progress-step flex-1 text-center font-semibold p-2 rounded-l-lg">1. Business</div><div class="progress-step flex-1 text-center font-semibold p-2">2. Owner</div><div class="progress-step flex-1 text-center font-semibold p-2">3. Contact</div><div class="progress-step flex-1 text-center font-semibold p-2">4. Bank</div><div class="progress-step flex-1 text-center font-semibold p-2">5. Docs</div><div class="progress-step flex-1 text-center font-semibold p-2">6. Menu</div><div class="progress-step flex-1 text-center font-semibold p-2 rounded-r-lg">7. Review</div></div>
+
+        <main class="bg-white p-6 md:p-12 shadow-lg rounded-xl">
+            <form>
+                <fieldset>
+                    <legend class="text-2xl font-bold text-gray-800 mb-6 border-b pb-3">3. Company Contact Information</legend>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div><label for="company_email" class="block text-sm font-medium text-gray-700 mb-1">Official Company Email</label><input type="email" name="company_email" id="company_email" required class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm p-3" /></div>
+                        <div><label for="company_phone" class="block text-sm font-medium text-gray-700 mb-1">Official Company Phone</label><input type="tel" name="company_phone" id="company_phone" required class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm p-3" /></div>
+                        <div class="md:col-span-2"><label for="support_contact" class="block text-sm font-medium text-gray-700 mb-1">Support/Customer Service Contact (Optional)</label><input type="text" name="support_contact" id="support_contact" class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm p-3" /></div>
+                    </div>
+                </fieldset>
+                <div class="flex justify-between pt-8 mt-8 border-t">
+                    <button type="button" onclick="navigateTo('/owner-info')" class="bg-gray-200 text-gray-800 font-semibold py-3 px-8 rounded-lg hover:bg-gray-300">← Previous</button>
+                    <button type="button" onclick="navigateTo('/bank-info')" class="bg-[var(--brand-pink)] text-white font-semibold py-3 px-8 rounded-lg hover:bg-[var(--brand-dark-pink)]">Next Step →</button>
+                </div>
+            </form>
+        </main>
+    </div>
+    <script src="/static/form-logic.js"></script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Menu Items - Merchant Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --brand-pink: #D70F64; --brand-dark-pink: #B30C52; }
+        body { font-family: 'Inter', sans-serif; }
+        input:focus, textarea:focus, select:focus { --tw-ring-color: var(--brand-pink); border-color: var(--brand-pink); }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen" data-page="6">
+    <div class="max-w-4xl mx-auto p-4 sm:p-8 my-10">
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <img src="/static/food_panda_logo.png" alt="Food Panda Logo" class="h-16 mx-auto mb-4">
+            <h1 class="text-3xl font-bold text-gray-800">Merchant Registration</h1>
+        </header>
+
+        <!-- Progress Bar -->
+        <div class="flex items-center justify-center rounded-lg p-2 mb-10 text-xs sm:text-sm">
+            <div class="progress-step flex-1 text-center font-semibold p-2 rounded-l-lg">1. Business</div>
+            <div class="progress-step flex-1 text-center font-semibold p-2">2. Owner</div>
+            <div class="progress-step flex-1 text-center font-semibold p-2">3. Contact</div>
+            <div class="progress-step flex-1 text-center font-semibold p-2">4. Bank</div>
+            <div class="progress-step flex-1 text-center font-semibold p-2">5. Docs</div>
+            <div class="progress-step flex-1 text-center font-semibold p-2">6. Menu</div>
+            <div class="progress-step flex-1 text-center font-semibold p-2 rounded-r-lg">7. Review</div>
+        </div>
+
+        <main class="bg-white p-6 md:p-12 shadow-lg rounded-xl">
+            <form>
+                <fieldset>
+                    <legend class="text-2xl font-bold text-gray-800 mb-6 border-b pb-3">6. Menu Items</legend>
+                    <div id="menu-items-container" class="space-y-8">
+                        <!-- Menu items will be dynamically added here by JavaScript -->
+                    </div>
+                    <div class="mt-6">
+                        <button type="button" id="add-meal-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-all">+ Add Another Meal</button>
+                    </div>
+                </fieldset>
+                
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between pt-8 mt-8 border-t">
+                    <button type="button" onclick="navigateTo('/documents')" class="bg-gray-200 text-gray-800 font-semibold py-3 px-8 rounded-lg hover:bg-gray-300">← Previous</button>
+                    <button type="button" onclick="navigateTo('/review')" class="bg-[var(--brand-pink)] text-white font-semibold py-3 px-8 rounded-lg hover:bg-[var(--brand-dark-pink)]">Next Step →</button>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <!-- Page-specific script for managing dynamic menu items -->
+    
+    
+    <!-- This MUST come AFTER the page-specific script. -->
+    <script src="/static/form-logic.js"></script>
+</body>
+</html>

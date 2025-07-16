@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Registration Successful</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand-pink: #D70F64;
+            --brand-dark-pink: #B30C52;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb; /* bg-gray-50 */
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="max-w-xl w-full mx-auto p-8 md:p-16 bg-white shadow-xl rounded-2xl my-10 text-center">
+    
+        <!-- Food Panda Logo -->
+        <header class="mb-8">
+            <img src="/static/food_panda_logo.png" alt="Food Panda Logo" class="h-16 mx-auto mb-6">
+        </header>
+
+        <!-- Success Message -->
+        <main>
+            <h1 class="text-3xl font-bold mb-3 text-gray-800">
+                Registration Successful ✅
+            </h1>
+      
+            <p class="mt-2 text-lg text-gray-600 mb-1">
+                Thank you for submitting your registration.
+            </p>
+
+            <p class="text-md text-gray-500">
+                We’ve received your information and will get back to you shortly.
+            </p>
+        </main>
+
+        <!-- Call to Action -->
+        <footer class="mt-10">
+            <a href="/food-panda" 
+               class="bg-[var(--brand-pink)] hover:bg-[var(--brand-dark-pink)] text-white font-semibold py-3 px-8 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 ease-in-out text-lg">
+                Back to Homepage
+            </a>
+        </footer>
+
+    </div>
+
+</body>
+</html>

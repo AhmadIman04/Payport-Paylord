@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>GrabFood Merchant Registration Form</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- html5-qrcode library -->
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /*
+      ============================================
+      Professional Grab-Themed Custom Styles
+      ============================================
+    */
+    :root {
+      --brand-green: #00B14F;
+      --brand-dark-green: #00A549;
+      --brand-light-green: #80EF80;
+      --brand-text-primary: #1C1C1C;
+      --brand-text-secondary: #6B6B6B;
+      --border-color: #D1D5DB; /* A slightly darker gray for better visibility */
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--brand-light-green);
+      color: var(--brand-text-primary);
+    }
+
+    .bg-brand-green { background-color: var(--brand-green); }
+    .hover\:bg-brand-dark-green:hover { background-color: var(--brand-dark-green); }
+    .text-brand-green { color: var(--brand-green); }
+
+    .input {
+      @apply block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3;
+      @apply transition duration-150 ease-in-out;
+      @apply focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500;
+    }
+
+    .input-file {
+      @apply block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold;
+      @apply file:bg-green-50 file:text-green-700 hover:file:bg-green-100;
+      @apply border border-gray-300 rounded-lg px-3 py-2 cursor-pointer;
+    }
+
+    fieldset {
+      border-color: #e5e7eb;
+    }
+
+    legend {
+      color: var(--brand-text-primary);
+      font-weight: 600;
+      @apply text-lg; /* Slightly larger legend text */
+    }
+
+    /* Primary action button */
+    .btn-primary {
+      @apply bg-brand-green text-white font-semibold py-3 px-8 rounded-lg;
+      @apply hover:bg-brand-dark-green shadow-sm hover:shadow-md;
+      @apply transition-all duration-200 ease-in-out;
+    }
+    
+    /* Secondary/utility button */
+    .btn-secondary {
+       @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg;
+       @apply transition-all duration-200 ease-in-out;
+    }
+
+    /* Destructive action button */
+    .btn-danger {
+       @apply bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg;
+       @apply transition-all duration-200 ease-in-out;
+    }
+
+    /* Change file link button */
+    .btn-link-style {
+      @apply ml-4 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold py-1 px-2 rounded;
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <div class="max-w-5xl mx-auto p-8 md:p-12 bg-white shadow-xl rounded-2xl my-10">
+    
+    <header class="text-center mb-10">
+      <img src="/static/grab_logo.png" alt="GrabFood Logo" class="h-16 mx-auto mb-4">
+      <h1 class="text-3xl font-bold text-brand-text-primary">GrabFood Merchant Registration</h1>
+      <p class="mt-2 text-md text-brand-text-secondary">
+          Join our platform to reach millions of customers. Fill out the form below to get started.
+      </p>
+    </header>
+
+
+    <!-- QR Registration Button -->
+    <div class="flex justify-center mb-8">
+      <button id="qr-button" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 px-6 py-2 rounded-lg font-semibold flex items-center space-x-2 transition-all shadow-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-green" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm2 2V5h1v1H5zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zm2 2v-1h1v1H5zM13 3a1 1 0 00-1 1v3a1 1 0 001 1h3a1 1 0 001-1V4a1 1 0 00-1-1h-3zm1 2v1h1V5h-1zM9 9a1 1 0 011-1h1v1a1 1 0 01-1 1H9a1 1 0 01-1-1V9a1 1 0 011-1h1v1H9v1zm5 4a1 1 0 011-1h1v1a1 1 0 01-1 1h-1a1 1 0 01-1-1v-1a1 1 0 011-1h1v1h-1v1z" clip-rule="evenodd" />
+        </svg>
+        <span>Sign In with QR Code</span>
+      </button>
+    </div>
+
+    <!-- QR Scanner Container (hidden by default) -->
+    <div id="qr-scanner" class="mb-8 p-4 border-2 border-dashed border-gray-200 rounded-lg" style="display:none;">
+      <div id="reader" class="w-full"></div>
+      <button id="qr-stop" class="mt-4 w-full btn-danger">Stop Scanner</button>
+    </div>
+
+    
+    <form id="merchant-form" class="space-y-10">
+
+      <!-- Business Info -->
+      <fieldset class="border p-6 rounded-lg">
+        <legend class="px-2">Business Information</legend>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+          <div><label for="business_name" class="block text-sm font-medium text-gray-700">Business Name (SSM)</label><input type="text" name="business_name" id="business_name" required class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+          <div><label for="outlet_name" class="block text-sm font-medium text-gray-700">Outlet Name</label><input type="text" name="outlet_name" id="outlet_name" class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+          <div><label for="outlet_address" class="block text-sm font-medium text-gray-700">Outlet Address</label><input type="text" name="outlet_address" id="outlet_address" required class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+          <div><label for="outlet_type" class="block text-sm font-medium text-gray-700">Outlet Type</label><input type="text" name="outlet_type" id="outlet_type" required class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+          <div><label for="outlet_category" class="block text-sm font-medium text-gray-700">Outlet Category</label><input type="text" name="outlet_category" id="outlet_category" required class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+          <div><label for="ssm_number" class="block text-sm font-medium text-gray-700">SSM Number</label><input type="text" name="ssm_number" id="ssm_number" required class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+          <div><label for="merchant_id" class="block text-sm font-medium text-gray-700">Merchant ID</label><input type="text" name="merchant_id" id="merchant_id" class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+          <div><label for="open_time" class="block text-sm font-medium text-gray-700">Opening Time</label><input type="time" name="open_time" id="open_time" required class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+          <div><label for="close_time" class="block text-sm font-medium text-gray-700">Closing Time</label><input type="time" name="close_time" id="close_time" required class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+          <div><label for="delivery_radius" class="block text-sm font-medium text-gray-700">Delivery Radius (km)</label><input type="text" name="delivery_radius" id="delivery_radius" class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+          <div><label for="service_type" class="block text-sm font-medium text-gray-700">Service Type</label><input type="text" name="service_type" id="service_type" required class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+        </div>
+      </fieldset>
+
+      <!-- Owner Info -->
+      <fieldset class="border p-6 rounded-lg">
+        <legend class="px-2">Owner Information</legend>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+          <div><label for="owner_name" class="block text-sm font-medium text-gray-700">Owner Name</label><input type="text" name="owner_name" id="owner_name" required class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+          <div><label for="owner_id" class="block text-sm font-medium text-gray-700">IC/Passport No</label><input type="text" name="owner_id" id="owner_id" required class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+          <div><label for="dob" class="block text-sm font-medium text-gray-700">Date of Birth</label><input type="date" name="dob" id="dob" required class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+          <div><label for="nationality" class="block text-sm font-medium text-gray-700">Nationality</label><input type="text" name="nationality" id="nationality" required class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+          <div><label for="owner_email" class="block text-sm font-medium text-gray-700">Owner Email</label><input type="email" name="owner_email" id="owner_email" required class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+          <div><label for="owner_phone" class="block text-sm font-medium text-gray-700">Owner Phone</label><input type="tel" name="owner_phone" id="owner_phone" required class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+          <div><label for="position" class="block text-sm font-medium text-gray-700">Position</label><input type="text" name="position" id="position" required class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+        </div>
+      </fieldset>
+
+      <!-- Company Contact Info -->
+      <fieldset class="border p-6 rounded-lg">
+        <legend class="px-2">Company Contact Information</legend>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+          <div><label for="company_email" class="block text-sm font-medium text-gray-700">Company Email</label><input type="email" name="company_email" id="company_email" required class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+          <div><label for="company_phone" class="block text-sm font-medium text-gray-700">Company Phone</label><input type="tel" name="company_phone" id="company_phone" required class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+          <div><label for="support_contact" class="block text-sm font-medium text-gray-700">Support Contact</label><input type="text" name="support_contact" id="support_contact" class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+        </div>
+      </fieldset>
+
+      <!-- Bank Info -->
+      <fieldset class="border p-6 rounded-lg">
+        <legend class="px-2">Bank Information</legend>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+          <div><label for="bank_name" class="block text-sm font-medium text-gray-700">Bank Name</label><input type="text" name="bank_name" id="bank_name" required class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+          <div><label for="bank_account" class="block text-sm font-medium text-gray-700">Account Number</label><input type="text" name="bank_account" id="bank_account" required class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+          <div><label for="account_holder" class="block text-sm font-medium text-gray-700">Account Holder Name</label><input type="text" name="account_holder" id="account_holder" required class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+          <div><label for="account_type" class="block text-sm font-medium text-gray-700">Account Type</label><input type="text" name="account_type" id="account_type" required class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+          <div class="file-input-container">
+            <label for="proof_of_account" class="block text-sm font-medium text-gray-700">Proof of Account</label>
+            <div id="proof_of_account-display" class="mt-1">
+              <input type="file" name="proof_of_account" id="proof_of_account" class="block w-full text-sm text-gray-600  file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 border border-gray-300 rounded-lg px-3 py-2 cursor-pointer" />
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Documents Upload -->
+      <fieldset class="border p-6 rounded-lg">
+        <legend class="px-2">Document Upload</legend>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+          <div class="file-input-container">
+            <label for="ssm_cert" class="block text-sm font-medium text-gray-700">SSM Certificate</label>
+            <div id="ssm_cert-display" class="mt-1">
+              <input type="file" name="ssm_cert" id="ssm_cert" required class="block w-full text-sm text-gray-600  file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 border border-gray-300 rounded-lg px-3 py-2 cursor-pointer" />
+            </div>
+          </div>
+          <div class="file-input-container">
+            <label for="ic_passport" class="block text-sm font-medium text-gray-700">Owner's IC/Passport</label>
+            <div id="ic_passport-display" class="mt-1">
+              <input type="file" name="ic_passport" id="ic_passport" required class="block w-full text-sm text-gray-600  file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 border border-gray-300 rounded-lg px-3 py-2 cursor-pointer" />
+            </div>
+          </div>
+          <div class="file-input-container">
+            <label for="bank_statement" class="block text-sm font-medium text-gray-700">Bank Statement</label>
+            <div id="bank_statement-display" class="mt-1">
+              <input type="file" name="bank_statement" id="bank_statement" class="block w-full text-sm text-gray-600  file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 border border-gray-300 rounded-lg px-3 py-2 cursor-pointer" />
+            </div>
+          </div>
+          <div class="file-input-container">
+            <label for="halal_cert" class="block text-sm font-medium text-gray-700">Halal Certificate (if applicable)</label>
+            <div id="halal_cert-display" class="mt-1">
+              <input type="file" name="halal_cert" id="halal_cert" class="block w-full text-sm text-gray-600  file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 border border-gray-300 rounded-lg px-3 py-2 cursor-pointer" />
+            </div>
+          </div>
+          <div class="file-input-container">
+            <label for="menu_photos" class="block text-sm font-medium text-gray-700">Menu (Photos)</label>
+            <div id="menu_photos-display" class="mt-1">
+              <input type="file" name="menu_photos" id="menu_photos" multiple required class="block w-full text-sm text-gray-600  file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 border border-gray-300 rounded-lg px-3 py-2 cursor-pointer" />
+            </div>
+          </div>
+          <div class="file-input-container">
+            <label for="outlet_photos" class="block text-sm font-medium text-gray-700">Outlet Photos</label>
+            <div id="outlet_photos-display" class="mt-1">
+              <input type="file" name="outlet_photos" id="outlet_photos" multiple class="block w-full text-sm text-gray-600  file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 border border-gray-300 rounded-lg px-3 py-2 cursor-pointer" />
+            </div>
+          </div>
+          <div class="file-input-container">
+            <label for="business_license" class="block text-sm font-medium text-gray-700">Business License</label>
+            <div id="business_license-display" class="mt-1">
+              <input type="file" name="business_license" id="business_license" class="block w-full text-sm text-gray-600  file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 border border-gray-300 rounded-lg px-3 py-2 cursor-pointer" />
+            </div>
+          </div>
+          <div class="file-input-container">
+            <label for="signed_agreement" class="block text-sm font-medium text-gray-700">Signed Agreement</label>
+            <div id="signed_agreement-display" class="mt-1">
+              <input type="file" name="signed_agreement" id="signed_agreement" required class="block w-full text-sm text-gray-600  file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 border border-gray-300 rounded-lg px-3 py-2 cursor-pointer" />
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Menu Section -->
+      <fieldset class="border p-6 rounded-lg">
+        <legend class="px-2">Menu Items</legend>
+        <div id="menu-items" class="space-y-6 mt-4">
+          <!-- Menu item template -->
+          <div class="menu-item bg-gray-50 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 border border-gray-200 p-4 rounded-lg">
+            <div><label class="block text-sm font-medium text-gray-700">Meal Name</label><input type="text" name="meal_name[]" required class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+            <div><label class="block text-sm font-medium text-gray-700">Price (RM)</label><input type="number" step="0.01" name="meal_price[]" required class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" /></div>
+            <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-700">Description</label><textarea name="meal_description[]" rows="2" class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500"></textarea></div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Meal Photo</label>
+              <div class="meal-photo-display mt-1">
+                <input type="file" name="meal_photo[]" accept="image/*" required class="block w-full text-sm text-gray-600  file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 border border-gray-300 rounded-lg px-3 py-2 cursor-pointer" />
+              </div>
+            </div>
+            <div><label class="block text-sm font-medium text-gray-700">Category</label><select name="meal_category[]" class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" required><option value="">-- Select --</option><option>Main Course</option><option>Drinks</option><option>Sides</option><option>Dessert</option></select></div>
+            <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-700">Add-ons / Customizations</label><textarea name="meal_addons[]" rows="2" class="block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 mt-1 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" placeholder="e.g., Extra Cheese (RM 2.00)"></textarea></div>
+            <div class="md:col-span-2 flex justify-end"><button type="button" onclick="deleteMenuItem(this)" class="btn-danger text-red-500">Delete Meal</button></div>
+          </div>
+        </div>
+        <div class="mt-6"><button type="button" onclick="addMenuItem()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-all duration-200 ease-in-out">+ Add Another Meal</button></div>
+      </fieldset>
+
+      <div class="flex justify-end pt-4 border-t mt-6">
+          <button type="submit"
+            class="bg-brand-green text-white font-semibold py-3 px-8 rounded-lg hover:bg-brand-dark-green shadow-sm hover:shadow-md transition-all duration-200 ease-in-out text-lg">
+            Submit Registration
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    function addMenuItem() {
+      const container = document.getElementById('menu-items');
+      // Use the first item as a template, assuming it always exists.
+      const template = container.querySelector('.menu-item');
+      if (!template) return; // Failsafe
+      const clone = template.cloneNode(true);
+      
+      // Clear all input values in the cloned node
+      clone.querySelectorAll('input, textarea').forEach(el => { 
+        if(el.type === 'file') {
+            el.value = null;
+        } else {
+            el.value = ''; 
+        }
+      });
+      clone.querySelector('select').selectedIndex = 0;
+      
+      // Reset the file input display to its original state
+      const photoDisplay = clone.querySelector('.meal-photo-display');
+      const fileInput = clone.querySelector('input[type="file"]');
+      if (photoDisplay && fileInput) {
+          photoDisplay.innerHTML = ''; // Clear any existing 'change' buttons/links
+          photoDisplay.appendChild(fileInput);
+          fileInput.style.display = 'block';
+      }
+      
+      container.appendChild(clone);
+    }
+
+    function deleteMenuItem(buttonEl) {
+      const container = document.getElementById('menu-items');
+      if (container.getElementsByClassName('menu-item').length > 1) {
+        buttonEl.closest('.menu-item').remove();
+      } else {
+        alert('You must have at least one menu item.');
+      }
+    }
+
+    const qrButton = document.getElementById('qr-button');
+    const scannerDiv = document.getElementById('qr-scanner');
+    const stopBtn = document.getElementById('qr-stop');
+    let html5Qr;
+
+    qrButton.addEventListener('click', () => {
+      qrButton.style.display = 'none';
+      scannerDiv.style.display = 'block';
+      html5Qr = new Html5Qrcode("reader");
+      html5Qr.start(
+        { facingMode: "environment" },
+        { fps: 30, qrbox: { width: 250, height: 250 } },
+        qrCodeMessage => {
+          html5Qr.stop().then(() => {
+            scannerDiv.style.display = 'none';
+            qrButton.style.display = 'flex'; // Use flex to match original style
+            fetchMerchantData(qrCodeMessage);
+          }).catch(err => console.error(err));
+        },
+        errorMessage => { /* Optional: handle scan errors */ }
+      ).catch(err => alert("Unable to start QR scanner: " + err));
+    });
+
+    stopBtn.addEventListener('click', () => {
+      if (html5Qr && html5Qr.isScanning) {
+        html5Qr.stop().then(() => {
+          scannerDiv.style.display = 'none';
+          qrButton.style.display = 'flex'; // Use flex to match original style
+        }).catch(err => console.error(err));
+      }
+    });
+    
+    function displayExistingFile(inputId, fileName, fileUrl) {
+      const inputElement = document.getElementById(inputId);
+      if (!inputElement) return;
+
+      const displayContainer = document.getElementById(`${inputId}-display`);
+      if (!displayContainer) return;
+
+      inputElement.style.display = 'none';
+      displayContainer.innerHTML = '';
+
+      const link = document.createElement('a');
+      link.href = fileUrl;
+      link.textContent = fileName;
+      link.target = '_blank';
+      link.className = 'text-brand-green hover:underline';
+
+      const changeButton = document.createElement('button');
+      changeButton.type = 'button';
+      changeButton.textContent = 'Change';
+      changeButton.className = 'ml-4 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold py-1 px-2 rounded';
+      
+      changeButton.onclick = () => {
+        displayContainer.innerHTML = '';
+        displayContainer.appendChild(inputElement);
+        inputElement.style.display = 'block';
+      };
+
+      displayContainer.appendChild(link);
+      displayContainer.appendChild(changeButton);
+    }
+
+    function displayExistingMenuFile(inputElement, displayContainer, fileName, fileUrl) {
+        if (!inputElement || !displayContainer) return;
+
+        inputElement.style.display = 'none';
+        displayContainer.innerHTML = ''; // Clear the container
+
+        const link = document.createElement('a');
+        link.href = fileUrl;
+        const displayName = fileName.includes('_') ? fileName.split('_').slice(1).join('_') : fileName;
+        link.textContent = displayName;
+        link.target = '_blank';
+        link.className = 'text-brand-green hover:underline';
+
+        const changeButton = document.createElement('button');
+        changeButton.type = 'button';
+        changeButton.textContent = 'Change';
+        changeButton.className = 'ml-4 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold py-1 px-2 rounded';
+        
+        changeButton.onclick = () => {
+            displayContainer.innerHTML = '';
+            displayContainer.appendChild(inputElement);
+            inputElement.style.display = 'block';
+        };
+
+        displayContainer.appendChild(link);
+        displayContainer.appendChild(changeButton);
+    }
+
+    function populateMenu(meals) {
+        const container = document.getElementById('menu-items');
+        // It's safer to have a hidden template in the HTML, but for now, we'll use the first item
+        const templateItem = container.querySelector('.menu-item');
+        
+        container.innerHTML = ''; // Clear any existing menu items
+
+        if (!meals || meals.length === 0) {
+            // If no meals, add back one empty template item
+            container.appendChild(templateItem);
+            return;
+        }
+        
+        meals.forEach((meal) => {
+            const newItem = templateItem.cloneNode(true);
+            
+            newItem.querySelector('input[name="meal_name[]"]').value = meal.name || '';
+            newItem.querySelector('input[name="meal_price[]"]').value = meal.price || '';
+            newItem.querySelector('textarea[name="meal_description[]"]').value = meal.description || '';
+            
+            const categorySelect = newItem.querySelector('select[name="meal_category[]"]');
+            const categoryOption = Array.from(categorySelect.options).find(opt => opt.text === meal.Category);
+            if (categoryOption) {
+                categorySelect.value = categoryOption.value;
+            } else if (meal.Category) {
+                const newOption = new Option(meal.Category, meal.Category, true, true);
+                categorySelect.add(newOption);
+            }
+
+            const addonsText = (meal.addOns || [])
+              .map(addon => `${addon.name} (RM ${addon.price.toFixed(2)})`)
+              .join('\n');
+            newItem.querySelector('textarea[name="meal_addons[]"]').value = addonsText;
+
+            if (meal.picture) {
+                const fileInput = newItem.querySelector('input[name="meal_photo[]"]');
+                const displayContainer = newItem.querySelector('.meal-photo-display');
+                const fileName = meal.picture.substring(meal.picture.lastIndexOf('/') + 1);
+                displayExistingMenuFile(fileInput, displayContainer, fileName, meal.picture);
+            }
+            container.appendChild(newItem);
+        });
+    }
+
+    async function fetchMerchantData(id) {
+        try {
+            // This is a placeholder for your actual API endpoint.
+            const resp = await fetch(`/api/merchant/${id}`);
+            if (!resp.ok) throw new Error(`Merchant not found (Error: ${resp.status})`);
+            const data = await resp.json();
+
+            // Reset all file inputs to their original state before populating
+            document.querySelectorAll('.file-input-container, .meal-photo-display').forEach(container => {
+                const input = container.querySelector('input[type="file"]');
+                if (input) {
+                    const displayContainer = container.id.endsWith('-display') ? container : document.getElementById(`${input.id}-display`);
+                    if(displayContainer) {
+                        displayContainer.innerHTML = '';
+                        displayContainer.appendChild(input);
+                        input.style.display = 'block';
+                    }
+                }
+            });
+
+            // Fill standard form inputs
+            for (const [key, value] of Object.entries(data)) {
+                const el = document.getElementById(key);
+                if (el && el.type !== 'file' && value !== null) {
+                    el.value = value;
+                }
+            }
+
+            // Handle the populated document file links
+            if (data.files) {
+                for (const [fileName, fileUrl] of Object.entries(data.files)) {
+                    if (fileName === 'json_menu.json') continue;
+                    const inputId = fileName.substring(0, fileName.lastIndexOf('.'));
+                    displayExistingFile(inputId, fileName, fileUrl);
+                }
+            }
+
+            // Check for, fetch, and populate menu data
+            if (data.files && data.files['json_menu.json']) {
+                const menuUrl = data.files['json_menu.json'];
+                const menuResp = await fetch(menuUrl);
+                if (!menuResp.ok) throw new Error('Could not fetch menu data from ' + menuUrl);
+                const menuData = await menuResp.json();
+                if (menuData.meals) {
+                    populateMenu(menuData.meals);
+                }
+            } else {
+                // If no menu data, clear the default menu item
+                populateMenu([]);
+            }
+
+        } catch (e) {
+            alert("Failed to fetch merchant data: " + e.message);
+            console.error(e);
+        }
+    }
+  </script>
+  <script>
+    document.getElementById('merchant-form').addEventListener('submit', function(event) {
+      // Prevent the default form submission behavior
+      event.preventDefault(); 
+      
+      // Redirect the user to the success page
+      window.location.href = 'success'; 
+    });
+  </script>
+
+</body>
+</html>

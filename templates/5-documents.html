@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Document Upload - Merchant Registration</title>
+    <!-- ... Same head content as other pages ... -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --brand-pink: #D70F64; --brand-dark-pink: #B30C52; }
+        body { font-family: 'Inter', sans-serif; }
+        input:focus, textarea:focus, select:focus { --tw-ring-color: var(--brand-pink); border-color: var(--brand-pink); }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen" data-page="5">
+    <div class="max-w-4xl mx-auto p-4 sm:p-8 my-10">
+        <!-- ... Same Header and Progress Bar as other pages ... -->
+        <header class="text-center mb-10"><img src="/static/food_panda_logo.png" alt="Food Panda Logo" class="h-16 mx-auto mb-4"><h1 class="text-3xl font-bold text-gray-800">Merchant Registration</h1></header>
+        <div class="flex items-center justify-center rounded-lg p-2 mb-10 text-xs sm:text-sm"><div class="progress-step flex-1 text-center font-semibold p-2 rounded-l-lg">1. Business</div><div class="progress-step flex-1 text-center font-semibold p-2">2. Owner</div><div class="progress-step flex-1 text-center font-semibold p-2">3. Contact</div><div class="progress-step flex-1 text-center font-semibold p-2">4. Bank</div><div class="progress-step flex-1 text-center font-semibold p-2">5. Docs</div><div class="progress-step flex-1 text-center font-semibold p-2">6. Menu</div><div class="progress-step flex-1 text-center font-semibold p-2 rounded-r-lg">7. Review</div></div>
+
+        <main class="bg-white p-6 md:p-12 shadow-lg rounded-xl">
+            <form>
+                <fieldset>
+                    <legend class="text-2xl font-bold text-gray-800 mb-6 border-b pb-3">5. Document Upload</legend>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="file-input-container"><label class="block text-sm font-medium text-gray-700 mb-1">SSM Certificate</label><div class="file-display mt-1"><input type="file" name="ssm_cert" required class="block w-full border-gray-300 rounded-lg shadow-sm text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 p-2 cursor-pointer" /></div></div>
+                        <div class="file-input-container"><label class="block text-sm font-medium text-gray-700 mb-1">Owner's IC/Passport</label><div class="file-display mt-1"><input type="file" name="ic_passport" required class="block w-full border-gray-300 rounded-lg shadow-sm text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 p-2 cursor-pointer" /></div></div>
+                        <div class="file-input-container"><label class="block text-sm font-medium text-gray-700 mb-1">Bank Statement Header</label><div class="file-display mt-1"><input type="file" name="bank_statement" class="block w-full border-gray-300 rounded-lg shadow-sm text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 p-2 cursor-pointer" /></div></div>
+                        <div class="file-input-container"><label class="block text-sm font-medium text-gray-700 mb-1">Halal Certificate (if any)</label><div class="file-display mt-1"><input type="file" name="halal_cert" class="block w-full border-gray-300 rounded-lg shadow-sm text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 p-2 cursor-pointer" /></div></div>
+                        <div class="file-input-container"><label class="block text-sm font-medium text-gray-700 mb-1">Business License</label><div class="file-display mt-1"><input type="file" name="business_license" class="block w-full border-gray-300 rounded-lg shadow-sm text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 p-2 cursor-pointer" /></div></div>
+                        <div class="file-input-container"><label class="block text-sm font-medium text-gray-700 mb-1">Signed Agreement</label><div class="file-display mt-1"><input type="file" name="signed_agreement" required class="block w-full border-gray-300 rounded-lg shadow-sm text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 p-2 cursor-pointer" /></div></div>
+                    </div>
+                </fieldset>
+                <div class="flex justify-between pt-8 mt-8 border-t">
+                    <button type="button" onclick="navigateTo('/bank-info')" class="bg-gray-200 text-gray-800 font-semibold py-3 px-8 rounded-lg hover:bg-gray-300">← Previous</button>
+                    <button type="button" onclick="navigateTo('/menu')" class="bg-[var(--brand-pink)] text-white font-semibold py-3 px-8 rounded-lg hover:bg-[var(--brand-dark-pink)]">Next Step →</button>
+                </div>
+            </form>
+        </main>
+    </div>
+    <script src="/static/form-logic.js"></script>
+</body>
+</html>

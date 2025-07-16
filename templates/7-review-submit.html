@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Review & Submit - Merchant Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --brand-pink: #D70F64; --brand-dark-pink: #B30C52; }
+        body { font-family: 'Inter', sans-serif; }
+        .review-section h3 { font-size: 1.25rem; font-weight: 700; color: #1f2937; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom-width: 1px; }
+        .review-item { margin-bottom: 0.75rem; }
+        .review-label { font-size: 0.875rem; color: #6b7280; }
+        .review-value { font-weight: 600; color: #111827; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen" data-page="7">
+    <div class="max-w-4xl mx-auto p-4 sm:p-8 my-10">
+        <!-- Header and Progress Bar -->
+        <header class="text-center mb-10"><img src="/static/food_panda_logo.png" alt="Food Panda Logo" class="h-16 mx-auto mb-4"><h1 class="text-3xl font-bold text-gray-800">Merchant Registration</h1></header>
+        <div class="flex items-center justify-center rounded-lg p-2 mb-10 text-xs sm:text-sm"><div class="progress-step flex-1 text-center font-semibold p-2 rounded-l-lg">1. Business</div><div class="progress-step flex-1 text-center font-semibold p-2">2. Owner</div><div class="progress-step flex-1 text-center font-semibold p-2">3. Contact</div><div class="progress-step flex-1 text-center font-semibold p-2">4. Bank</div><div class="progress-step flex-1 text-center font-semibold p-2">5. Docs</div><div class="progress-step flex-1 text-center font-semibold p-2">6. Menu</div><div class="progress-step flex-1 text-center font-semibold p-2 rounded-r-lg">7. Review</div></div>
+
+        <main class="bg-white p-6 md:p-12 shadow-lg rounded-xl">
+            <fieldset>
+                <legend class="text-2xl font-bold text-gray-800 mb-6 border-b pb-3">7. Review Your Information</legend>
+                <div id="review-container" class="space-y-8 text-gray-800">
+                    <p class="text-center text-gray-500">Loading your information for review...</p>
+                </div>
+            </fieldset>
+
+            <!-- The form action is now "#" as the submission is handled by JavaScript -->
+            <form action="#" method="post" id="final-form">
+                <!-- The hidden input is no longer strictly necessary for a simulated submission, but we'll leave it -->
+                <input type="hidden" name="full_data" id="full_data_input">
+                
+                <div class="flex justify-between pt-8 mt-8 border-t">
+                    <button type="button" onclick="navigateTo('/menu')" class="bg-gray-200 text-gray-800 font-semibold py-3 px-8 rounded-lg hover:bg-gray-300">← Previous</button>
+                    <!-- This is now a standard button that triggers the submit event -->
+                    <button type="submit" class="bg-green-500 text-white font-bold py-3 px-8 rounded-lg hover:bg-green-600 shadow-lg hover:shadow-xl transition-all text-lg">Confirm & Submit Registration</button>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <!-- Main logic file must be included -->
+    <script src="/static/form-logic.js"></script>
+    
+    <!-- This special script renders the review page and handles the final redirect -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // CORRECTED: Reading from sessionStorage
+            const data = JSON.parse(sessionStorage.getItem(PANDA_FORM_DATA_KEY)) || {};
+            const container = document.getElementById('review-container');
+            const hiddenInput = document.getElementById('full_data_input');
+
+            hiddenInput.value = JSON.stringify(data, null, 2);
+
+            const renderItem = (label, value) => {
+                if (!value) return '';
+                return `<div class="review-item"><p class="review-label">${label}</p><p class="review-value">${value}</p></div>`;
+            };
+
+            const renderFile = (label, url) => {
+                if (!url) return '';
+                const fileName = url.split('/').pop().split('?')[0];
+                return `<div class="review-item"><p class="review-label">${label}</p><a href="${url}" target="_blank" class="review-value text-pink-600 hover:underline">${decodeURIComponent(fileName)}</a></div>`;
+            };
+
+            const sections = {
+                "Business Information": { "Business Name": data.business_name, "Outlet Name": data.outlet_name, "Outlet Address": data.outlet_address, "Outlet Type": data.outlet_type, "Outlet Category": data.outlet_category, "SSM Number": data.ssm_number },
+                "Owner Information": { "Owner Name": data.owner_name, "IC/Passport No.": data.owner_id, "Date of Birth": data.dob, "Nationality": data.nationality, "Owner Email": data.owner_email, "Owner Phone": data.owner_phone, "Position": data.position },
+                "Company Contact": { "Company Email": data.company_email, "Company Phone": data.company_phone, "Support Contact": data.support_contact },
+                "Bank Information": { "Bank Name": data.bank_name, "Account Number": data.bank_account, "Account Holder": data.account_holder, "Account Type": data.account_type },
+            };
+            
+            let html = '';
+
+            for (const [sectionTitle, sectionData] of Object.entries(sections)) {
+                let sectionHtml = '';
+                for (const [label, value] of Object.entries(sectionData)) {
+                    sectionHtml += renderItem(label, value);
+                }
+                if (sectionHtml) {
+                    html += `<div class="review-section"><h3>${sectionTitle}</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-x-8">${sectionHtml}</div></div>`;
+                }
+            }
+            
+            if (data.files && Object.keys(data.files).length > 0) {
+                let filesHtml = '';
+                const fileLabels = { ssm_cert: "SSM Certificate", ic_passport: "Owner's IC/Passport", bank_statement: "Bank Statement", halal_cert: "Halal Certificate", business_license: "Business License", signed_agreement: "Signed Agreement", proof_of_account: "Proof of Account" };
+                for (const [key, url] of Object.entries(data.files)) {
+                    if (key !== 'json_menu') {
+                        filesHtml += renderFile(fileLabels[key] || key.replace(/_/g, ' '), url);
+                    }
+                }
+                if (filesHtml) {
+                    html += `<div class="review-section"><h3>Uploaded Documents</h3><div class="space-y-2">${filesHtml}</div></div>`;
+                }
+            }
+
+            const meals = [];
+            for (const key in data) {
+                if (key.startsWith('meal_')) {
+                    const parts = key.split('_');
+                    const field = parts[1];
+                    const index = parseInt(parts[2], 10);
+                    if (!meals[index]) meals[index] = {};
+                    meals[index][field] = data[key];
+                }
+            }
+            if (meals.length > 0) {
+                html += `<div class="review-section"><h3>Menu Items</h3><div class="space-y-4">`;
+                meals.forEach((meal) => {
+                    html += `<div class="p-4 bg-gray-50 rounded-lg border"><p class="font-bold text-lg">${meal.name || 'Unnamed Meal'}</p><p class="text-sm text-gray-600 mt-1">${meal.description || ''}</p><div class="mt-2 grid grid-cols-2 gap-x-4"><p class="text-sm"><strong>Category:</strong> ${meal.category || 'N/A'}</p><p class="text-sm font-semibold"><strong>Price:</strong> RM ${parseFloat(meal.price || 0).toFixed(2)}</p></div>${renderFile('Meal Photo', meal.picture)}</div>`;
+                });
+                html += `</div></div>`;
+            }
+
+            container.innerHTML = html;
+
+            // --- THIS IS THE MODIFIED LOGIC ---
+            document.getElementById('final-form').addEventListener('submit', (event) => {
+                // 1. Prevent the form from trying to submit to a server.
+                event.preventDefault();
+
+                // 2. Clear the session data so the next visit starts fresh.
+                sessionStorage.removeItem(PANDA_FORM_DATA_KEY);
+
+                // 3. Redirect to the success page you requested.
+                // NOTE: You will need to create the '8-success-foodpanda.html' file and a route for it in main.py.
+                // I am redirecting to '/success' which you already have a template and route for.
+                window.location.href = '/success_foodpanda';
+            });
+        });
+    </script>
+</body>
+</html>
