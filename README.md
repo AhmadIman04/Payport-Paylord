@@ -13,7 +13,6 @@ PayPort also includes an intelligent chatbot assistant powered by **Gemini and R
 
 - 📋 Multi-step merchant registration with autosave
 - 📎 Secure upload of documents (SSM cert, IC, etc.)
-- 🔄 Resume saved sessions with local storage
 - 📦 Data stored securely in Supabase (PostgreSQL + File Storage)
 - 📲 QR code generation to encapsulate merchant identity
 - 📷 Camera-based QR scanning to auto-fill forms
