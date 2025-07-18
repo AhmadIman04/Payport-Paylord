@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PayPort Home</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+    .duitnow-pink { color: #D9006C; }
+    .bg-duitnow-pink { background-color: #D9006C; }
+    .border-duitnow-pink { border-color: #D9006C; }
+    .bg-page-background { background-color: #f0f2f5; }
+  </style>
+</head>
+<body class="bg-page-background flex items-center justify-center min-h-screen p-4">
+
+  <!-- Phone Frame with Fixed Dimensions -->
+  <div class="w-full max-w-sm h-[812px] bg-black rounded-[40px] shadow-2xl p-2.5">
+    <div class="w-full h-full bg-white rounded-[30px] overflow-hidden relative">
+      
+      <!-- App Content Structure -->
+      <div class="h-full flex flex-col">
+        <!-- Header -->
+        <header class="text-center py-6 px-4">
+          <h1 id="welcome-message" class="text-3xl font-bold text-gray-800">Hi...</h1>
+          <p class="text-gray-500 mt-1">Manage your merchant profile</p>
+        </header>
+
+        <!-- Menu Buttons Grid (Scrollable) -->
+        <main class="flex-grow px-4 py-6 overflow-y-auto">
+          <div class="grid grid-cols-2 gap-5">
+            <!-- Business Information Button -->
+            <a href="/phone-bi" class="flex flex-col items-center justify-center p-4 bg-gray-50 border border-gray-200 rounded-2xl shadow-sm aspect-square text-center hover:shadow-lg hover:border-duitnow-pink/50 transition-all duration-300">
+              <img src="/static/business_photo.png" alt="Business Icon" class="w-1/2 max-w-[80px] h-auto mb-3">
+              <span class="font-semibold text-gray-700 text-sm leading-tight">Business Information</span>
+            </a>
+            <!-- Other buttons... -->
+            <a href="/phone-pi" class="flex flex-col items-center justify-center p-4 bg-gray-50 border border-gray-200 rounded-2xl shadow-sm aspect-square text-center hover:shadow-lg hover:border-duitnow-pink/50 transition-all duration-300"><img src="/static/personal_photo.png" alt="Personal Icon" class="w-1/2 max-w-[80px] h-auto mb-3"><span class="font-semibold text-gray-700 text-sm leading-tight">Personal Information</span></a>
+            <a href="/phone-ci" class="flex flex-col items-center justify-center p-4 bg-gray-50 border border-gray-200 rounded-2xl shadow-sm aspect-square text-center hover:shadow-lg hover:border-duitnow-pink/50 transition-all duration-300"><img src="/static/company_photo.png" alt="Company Icon" class="w-1/2 max-w-[80px] h-auto mb-3"><span class="font-semibold text-gray-700 text-sm leading-tight">Company Contact</span></a>
+            <a href="/phone-bank" class="flex flex-col items-center justify-center p-4 bg-gray-50 border border-gray-200 rounded-2xl shadow-sm aspect-square text-center hover:shadow-lg hover:border-duitnow-pink/50 transition-all duration-300"><img src="/static/bank_photo.png" alt="Bank Icon" class="w-1/2 max-w-[80px] h-auto mb-3"><span class="font-semibold text-gray-700 text-sm leading-tight">Bank Information</span></a>
+            <a href="/phone-documents" class="flex flex-col items-center justify-center p-4 bg-gray-50 border border-gray-200 rounded-2xl shadow-sm aspect-square text-center hover:shadow-lg hover:border-duitnow-pink/50 transition-all duration-300"><img src="/static/document_photo.png" alt="Documents Icon" class="w-1/2 max-w-[80px] h-auto mb-3"><span class="font-semibold text-gray-700 text-sm leading-tight">Documents</span></a>
+            <a href="/phone-food-menu" class="flex flex-col items-center justify-center p-4 bg-gray-50 border border-gray-200 rounded-2xl shadow-sm aspect-square text-center hover:shadow-lg hover:border-duitnow-pink/50 transition-all duration-300"><img src="/static/menu_photo.png" alt="Menu Icon" class="w-1/2 max-w-[80px] h-auto mb-3"><span class="font-semibold text-gray-700 text-sm leading-tight">Food Menu</span></a>
+          </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="p-4 flex-shrink-0">
+          <button id="display-qr-btn" class="w-full bg-duitnow-pink text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:bg-opacity-90 transition-colors">
+            Display QR Code
+          </button>
+        </footer>
+      </div>
+      
+      <!-- NEW: Floating Chatbot Button -->
+      <a href="/chat-bot" class="absolute bottom-24 right-5 bg-duitnow-pink text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.837 8.837 0 01-4.445-1.282A1 1 0 004 15.635V17a1 1 0 01-1 1h-1a1 1 0 01-1-1v-2.143a1 1 0 00-.616-.928A9.003 9.003 0 012 10c0-4.97 4.477-9 10-9s10 4.03 10 9zm-2 0a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1zm1 3a1 1 0 100 2h2a1 1 0 100-2H8z" clip-rule="evenodd" />
+        </svg>
+      </a>
+
+    </div>
+  </div>
+  <!-- End Phone Frame -->
+
+  <!-- QR Code Modal (No Changes Here) -->
+  <div id="qr-modal" class="fixed inset-0 bg-black bg-opacity-60 items-center justify-center hidden">
+    <div class="bg-white rounded-2xl p-8 max-w-sm w-full mx-4 text-center shadow-2xl">
+      <h2 class="text-xl font-bold text-gray-800">Scan to Register</h2>
+      <p class="text-gray-500 mb-4">This QR code contains your merchant data.</p>
+      <img src="/static/Qr_code.png" alt="Merchant QR Code" class="mx-auto w-64 h-64 border-4 border-gray-200 rounded-lg">
+      <p id="timer-text" class="mt-4 text-lg font-semibold duitnow-pink">Closing in 60s</p>
+      <button id="done-btn" class="mt-4 w-full bg-gray-200 text-gray-800 font-bold py-3 rounded-lg hover:bg-gray-300 transition-colors">Done</button>
+    </div>
+  </div>
+
+  <script>
+    // No changes needed to the existing script
+    const MERCHANT_ID = "ad4964f4-4caa-41bd-ae8e-6e8a6c629c0e";
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const response = await fetch(`/get_owner?merchant_id=${MERCHANT_ID}`);
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+        document.getElementById('welcome-message').textContent = `Hi, ${data.owner_name}`;
+      } catch (error) {
+        console.error("Failed to fetch owner's name:", error);
+        document.getElementById('welcome-message').textContent = 'Hi, Merchant';
+      }
+      const qrModal = document.getElementById('qr-modal'),displayQrBtn = document.getElementById('display-qr-btn'),doneBtn = document.getElementById('done-btn'),timerText = document.getElementById('timer-text');
+      let timerInterval,countdown;
+      function showQrModal() {
+        qrModal.classList.remove('hidden');
+        qrModal.classList.add('flex');
+        countdown = 60;
+        timerText.textContent = `Closing in ${countdown}s`;
+        timerInterval = setInterval(() => {
+          countdown--;
+          timerText.textContent = `Closing in ${countdown}s`;
+          if (countdown <= 0) hideQrModal();
+        }, 1000);
+      }
+      function hideQrModal() {
+        clearInterval(timerInterval);
+        qrModal.classList.add('hidden');
+        qrModal.classList.remove('flex');
+      }
+      displayQrBtn.addEventListener('click', showQrModal);
+      doneBtn.addEventListener('click', hideQrModal);
+    });
+  </script>
+
+</body>
+</html>

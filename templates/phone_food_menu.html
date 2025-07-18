@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Menu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        .duitnow-pink { color: #D9006C; }
+        .bg-page-background { background-color: #f0f2f5; }
+        /* Simple transition for the dropdown arrow */
+        details summary::-webkit-details-marker {
+            display: none;
+        }
+        details > summary svg {
+            transition: transform 0.2s;
+        }
+        details[open] > summary svg {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body class="bg-page-background flex items-center justify-center min-h-screen p-4">
+
+    <!-- Phone Frame with Fixed Dimensions -->
+    <div class="w-full max-w-sm h-[812px] bg-black rounded-[40px] shadow-2xl p-2.5">
+      <div class="w-full h-full bg-white rounded-[30px] overflow-hidden">
+        
+        <!-- App Content Structure -->
+        <div class="h-full flex flex-col">
+            <!-- Header -->
+            <header class="py-4 flex items-center px-4 bg-white z-10 border-b flex-shrink-0">
+                <a href="/phone-home" class="text-gray-600 hover:text-gray-900 p-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                </a>
+                <h1 class="text-xl font-bold text-gray-800 text-center flex-grow">Food Menu</h1>
+                <div class="w-7"></div> <!-- Spacer -->
+            </header>
+
+            <!-- Main Content (Scrollable) -->
+            <main id="menu-container" class="flex-grow p-4 space-y-4 overflow-y-auto bg-gray-50/50">
+                <p class="text-center text-gray-500 pt-8">Loading menu...</p>
+            </main>
+            
+            <!-- Footer -->
+            <footer class="p-4 border-t bg-white flex-shrink-0">
+                <button class="w-full bg-gray-800 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-gray-700 transition-colors">
+                    Edit
+                </button>
+            </footer>
+        </div>
+        <!-- End App Content -->
+
+      </div>
+    </div>
+    <!-- End Phone Frame -->
+
+    <script>
+        const MERCHANT_ID = "ad4964f4-4caa-41bd-ae8e-6e8a6c629c0e";
+
+        function createMealCard(meal) {
+            const addOnsHtml = (meal.addOns && meal.addOns.length > 0) ? meal.addOns.map(addon => `
+                <li class="flex justify-between text-sm text-gray-600 py-1">
+                    <span>${addon.name}</span>
+                    <span class="font-medium">+RM ${addon.price.toFixed(2)}</span>
+                </li>
+            `).join('') : '';
+
+            return `
+                <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden transition-all hover:shadow-lg">
+                    <a href="${meal.picture}" target="_blank">
+                        <img src="${meal.picture}" alt="${meal.name}" class="w-full h-40 object-cover">
+                    </a>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                             <h3 class="text-lg font-bold text-gray-800 pr-2">${meal.name}</h3>
+                             <p class="text-lg font-bold text-right duitnow-pink flex-shrink-0">RM ${meal.price.toFixed(2)}</p>
+                        </div>
+                        <p class="text-sm text-gray-500 mb-3 font-medium">${meal.Category}</p>
+                        <p class="text-gray-700 text-sm mb-4">${meal.description}</p>
+                        
+                        ${addOnsHtml ? `
+                        <details class="group">
+                            <summary class="list-none flex justify-between items-center cursor-pointer text-sm font-semibold text-gray-600 hover:text-gray-900 py-1">
+                                <span>View Add-ons</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </summary>
+                            <ul class="mt-2 pt-2 border-t space-y-1">${addOnsHtml}</ul>
+                        </details>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const container = document.getElementById('menu-container');
+            try {
+                const response = await fetch(`/get_json_menu?merchant_id=${MERCHANT_ID}`);
+                if (!response.ok) throw new Error('Failed to fetch menu');
+                const data = await response.json();
+                const meals = data.menu.meals;
+
+                if (meals && meals.length > 0) {
+                    container.innerHTML = meals.map(createMealCard).join('');
+                } else {
+                    container.innerHTML = '<p class="text-center text-gray-500 pt-8">No menu items found.</p>';
+                }
+            } catch (error) {
+                console.error("Error fetching menu:", error);
+                container.innerHTML = '<p class="text-center text-red-500 pt-8">Could not load menu.</p>';
+            }
+        });
+    </script>
+
+</body>
+</html>

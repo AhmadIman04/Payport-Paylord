@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documents</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        .bg-page-background { background-color: #f0f2f5; }
+    </style>
+</head>
+<body class="bg-page-background flex items-center justify-center min-h-screen p-4">
+
+    <!-- Phone Frame with Fixed Dimensions -->
+    <div class="w-full max-w-sm h-[812px] bg-black rounded-[40px] shadow-2xl p-2.5">
+      <div class="w-full h-full bg-white rounded-[30px] overflow-hidden">
+        
+        <!-- App Content Structure -->
+        <div class="h-full flex flex-col">
+            <!-- Header -->
+            <header class="py-4 flex items-center px-4 bg-white z-10 border-b flex-shrink-0">
+                <a href="/phone-home" class="text-gray-600 hover:text-gray-900 p-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                </a>
+                <h1 class="text-xl font-bold text-gray-800 text-center flex-grow">Documents</h1>
+                <div class="w-7"></div> <!-- Spacer to perfectly center the title -->
+            </header>
+
+            <!-- Main Content (Scrollable) -->
+            <main id="info-container" class="flex-grow p-4 space-y-3 overflow-y-auto bg-gray-50/50">
+                <p class="text-center text-gray-500 pt-8">Loading documents...</p>
+            </main>
+            
+            <!-- Footer -->
+            <footer class="p-4 border-t bg-white flex-shrink-0">
+                <button class="w-full bg-gray-800 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-gray-700 transition-colors">
+                    Edit
+                </button>
+            </footer>
+        </div>
+        <!-- End App Content -->
+
+      </div>
+    </div>
+    <!-- End Phone Frame -->
+
+    <script>
+        const MERCHANT_ID = "ad4964f4-4caa-41bd-ae8e-6e8a6c629c0e";
+
+        function createFileLinkRow(label, url) {
+            const isAvailable = url !== null;
+            const fileName = isAvailable ? url.split('/').pop().split('?')[0].replace(`${MERCHANT_ID}_`, '') : 'Not Uploaded';
+            const linkClass = isAvailable ? "text-blue-600 hover:underline" : "text-gray-400 italic";
+            const iconColor = isAvailable ? "text-blue-500" : "text-gray-300";
+
+            // Make the entire card a clickable link if available
+            const anchorTag = isAvailable 
+                ? `<a href="${url}" target="_blank" class="bg-white border border-gray-200 p-4 rounded-lg flex items-center space-x-4 transition-all hover:shadow-md hover:border-blue-300">`
+                : `<div class="bg-white border border-gray-200 p-4 rounded-lg flex items-center space-x-4 opacity-70">`;
+
+            return `
+                 ${anchorTag}
+                    <div class="flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 ${iconColor}" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="flex-grow overflow-hidden">
+                        <p class="font-semibold text-gray-700">${label}</p>
+                        <p class="${linkClass} text-sm truncate">${fileName}</p>
+                    </div>
+                    ${isAvailable ? `
+                    <div class="flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </div>` : ''}
+                ${isAvailable ? '</a>' : '</div>'}
+            `;
+        }
+        
+        function formatLabel(key) {
+          return key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const container = document.getElementById('info-container');
+            try {
+                const response = await fetch(`/get_documents?merchant_id=${MERCHANT_ID}`);
+                if (!response.ok) throw new Error('Failed to fetch data');
+                const data = await response.json();
+                const docs = data.documents;
+
+                if (Object.keys(docs).length > 0) {
+                    let content = '';
+                    for (const [key, url] of Object.entries(docs)) {
+                        content += createFileLinkRow(formatLabel(key), url);
+                    }
+                    container.innerHTML = content;
+                } else {
+                     container.innerHTML = '<p class="text-center text-gray-500 pt-8">No documents found.</p>';
+                }
+
+            } catch (error) {
+                console.error("Error fetching documents:", error);
+                container.innerHTML = '<p class="text-center text-red-500 pt-8">Could not load documents.</p>';
+            }
+        });
+    </script>
+
+</body>
+</html>
