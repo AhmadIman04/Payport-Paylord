@@ -61,9 +61,16 @@ PayPort also includes an intelligent chatbot assistant powered by **Gemini and R
 
 # App snippets
 
-<img width="417" height="834" alt="image" src="https://github.com/user-attachments/assets/a959b5b4-8723-48ba-914a-c9cef722cab3" />  <img width="412" height="832" alt="image" src="https://github.com/user-attachments/assets/b141d9b0-b294-4bff-bec2-6d942a0c33a0" />  <img width="397" height="825" alt="image" src="https://github.com/user-attachments/assets/5ed3ce4f-b8bc-40b1-87c1-f26b8757987c" />
+<img src="https://github.com/user-attachments/assets/a959b5b4-8723-48ba-914a-c9cef722cab3" width="208" height="417" />
+<img src="https://github.com/user-attachments/assets/b141d9b0-b294-4bff-bec2-6d942a0c33a0" width="206" height="416" />
+<img src="https://github.com/user-attachments/assets/5ed3ce4f-b8bc-40b1-87c1-f26b8757987c" width="198" height="412" />
 
-<img width="436" height="837" alt="image" src="https://github.com/user-attachments/assets/0ef4b9d6-5b65-4d59-b1c2-6eab4475bf58" /> <img width="446" height="849" alt="image" src="https://github.com/user-attachments/assets/08eab4b6-5ca4-4402-9de8-798d1c4d38b0" />  <img width="1036" height="820" alt="image" src="https://github.com/user-attachments/assets/a004461f-5425-45aa-a821-c59d9e54623d" />
+<br/>
+
+<img src="https://github.com/user-attachments/assets/0ef4b9d6-5b65-4d59-b1c2-6eab4475bf58" width="218" height="418" />
+<img src="https://github.com/user-attachments/assets/08eab4b6-5ca4-4402-9de8-798d1c4d38b0" width="223" height="424" />
+<img src="https://github.com/user-attachments/assets/a004461f-5425-45aa-a821-c59d9e54623d" width="518" height="410" />
+
 
 
 
