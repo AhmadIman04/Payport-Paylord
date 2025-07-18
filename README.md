@@ -69,7 +69,6 @@ PayPort also includes an intelligent chatbot assistant powered by **Gemini and R
 
 <img src="https://github.com/user-attachments/assets/0ef4b9d6-5b65-4d59-b1c2-6eab4475bf58" width="218" height="418" />
 <img src="https://github.com/user-attachments/assets/08eab4b6-5ca4-4402-9de8-798d1c4d38b0" width="223" height="424" />
-<img src="https://github.com/user-attachments/assets/a004461f-5425-45aa-a821-c59d9e54623d" width="518" height="410" />
 
 
 
