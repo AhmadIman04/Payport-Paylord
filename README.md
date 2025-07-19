@@ -52,8 +52,6 @@ PayPort also includes an intelligent chatbot assistant powered by **Gemini and R
 - At any point, users can open the **AI chatbot** powered by **Gemini**.
 - Ask questions like:
   - “What documents do I need?”
-  - “How do I fix a missing field?”
-  - “Where can I view my QR code?”
 - The chatbot uses **retrieval-augmented generation (RAG)** to provide **accurate, context-aware answers** using internal documentation and guides.
 
 ---
