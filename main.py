@@ -11,6 +11,14 @@ import os
 import json
 from pydantic import BaseModel
 import google.generativeai as genai
+from pydantic import BaseModel, EmailStr
+from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import random
+
+pin_storage = [0]
 
 app = FastAPI()
 
@@ -76,10 +84,12 @@ async def submit_form(
 
 load_dotenv()  # Load variables from .env file
 
+
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 # Set your Gemini API key
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+APP_PASSWORD = os.getenv("APP_PASSWORD")
 genai.configure(api_key = GOOGLE_API_KEY)
 
 # Load the Gemini 2.0 Flash model
@@ -265,7 +275,8 @@ async def generate_text(request: PromptRequest):
             contents = file.read()
         actual_prompt = f"""
         Persona : You are a chatbot that is build for an app that is built to guide merchants in malaysia to onboard and digitalize their business
-        easier, there fore you will give some kind of information and based on that info you will need to answer the user query
+        easier, there fore you will give some kind of information and based on that info you will need to answer the user query, you are not designed to anwer
+        any questions that is not related to registering business to use online services
         Information : {contents}
         User Query :{request.prompt}
 
@@ -275,6 +286,120 @@ async def generate_text(request: PromptRequest):
         return {"response": response.text}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+
+@app.post("/get_merchant_id_by_nric")
+def find_merchant_id_by_nric(nric: str) -> Optional[str]:
+    nric = f"IC{nric}"
+    response = supabase.table("merchant_data").select("id").eq("owner_id", nric).single().execute()
+    return response.data["id"]
+
+
+# Email credentials and server setup
+sender_email = "ahmadimanh3@gmail.com"  # fix the double @@
+app_password = APP_PASSWORD
+smtp_server = "smtp.gmail.com"
+port = 587
+
+
+# Request body model
+class EmailRequest(BaseModel):
+    email: EmailStr
+
+
+@app.post("/send-verification-pin")
+def send_verification_pin(request: EmailRequest) -> bool:
+    receiver_email = request.email
+    subject = "Your GrabFood Registration Verification PIN"
+
+    # Generate a random 6-digit PIN
+    pin = random.randint(100000, 999999)
+    pin_storage[0] = pin
+
+    # HTML email body
+    body = f"""
+    <html>
+      <body>
+        <p style="font-family:Arial, sans-serif; font-size:16px;">
+          Dear user,<br><br>
+          <strong>Your verification PIN is:</strong> 
+          <span style="font-size:18px; color:#2E86C1;"><strong>{pin}</strong></span><br><br>
+          This PIN is valid for <strong>10 minutes</strong>.<br><br>
+          Thank you for using <strong>GrabFood Registration</strong>.
+        </p>
+      </body>
+    </html>
+    """
+
+    # Create the email message
+    message = MIMEMultipart("alternative")
+    message["From"] = sender_email
+    message["To"] = receiver_email
+    message["Subject"] = subject
+    message.attach(MIMEText(body, "html"))
+
+    try:
+        with smtplib.SMTP(smtp_server, port) as server:
+            server.starttls()
+            server.login(sender_email, app_password)
+            server.sendmail(sender_email, receiver_email, message.as_string())
+        return True
+    except Exception as e:
+        print(f"Email send error: {e}")
+        return False
+    
+@app.post("/send-verification-pin-foodpanda")
+def send_verification_pin_foodpanda(request: EmailRequest) -> bool:
+    receiver_email = request.email
+    subject = "Your FoodPanda Registration Verification PIN"
+
+    # Generate a random 6-digit PIN
+    pin = random.randint(100000, 999999)
+    pin_storage[0] = pin
+
+    # HTML email body
+    body = f"""
+    <html>
+      <body>
+        <p style="font-family:Arial, sans-serif; font-size:16px;">
+          Dear user,<br><br>
+          <strong>Your verification PIN is:</strong> 
+          <span style="font-size:18px; color:#2E86C1;"><strong>{pin}</strong></span><br><br>
+          This PIN is valid for <strong>10 minutes</strong>.<br><br>
+          Thank you for using <strong>Food Panda Registration</strong>.
+        </p>
+      </body>
+    </html>
+    """
+
+    # Create the email message
+    message = MIMEMultipart("alternative")
+    message["From"] = sender_email
+    message["To"] = receiver_email
+    message["Subject"] = subject
+    message.attach(MIMEText(body, "html"))
+
+    try:
+        with smtplib.SMTP(smtp_server, port) as server:
+            server.starttls()
+            server.login(sender_email, app_password)
+            server.sendmail(sender_email, receiver_email, message.as_string())
+        return True
+    except Exception as e:
+        print(f"Email send error: {e}")
+        return False
+
+@app.get("/get_pin")
+def get_pin():
+    return pin_storage[0]
+
+@app.get("/check_pin")
+def check_pin(pin:int):
+    if(pin==pin_storage[0]):
+        return True
+    else:
+        return False
 
 #############################################################################
 
