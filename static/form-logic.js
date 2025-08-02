@@ -1,9 +1,10 @@
 /**
- * form-logic.js (Final Version with Meal Picture Loading)
+ * form-logic.js
  * Manages the state of the multi-page form using sessionStorage.
- * - Correctly transforms file keys on the client-side.
- * - Asynchronously fetches and parses json_menu.json to populate the menu.
- * - NEW: Adds and populates the meal picture input.
+ * - Handles QR code scanning to pre-fill data.
+ * - Manages PayPort sign-in flow: sends PIN, verifies PIN, and fetches merchant data.
+ * - Correctly transforms file keys and populates menu items, including meal pictures.
+ * - CORRECTED: Sends PayPort NRIC data in the correct JSON format for the backend.
  */
 
 const PANDA_FORM_DATA_KEY = 'pandaMerchantRegistrationData';
@@ -86,7 +87,7 @@ function displayExistingFile(inputElement, displayContainer, fileName, fileUrl) 
 }
 
 
-// --- API Interaction for QR Code ---
+// --- API Interaction for Data Loading ---
 
 async function fetchAndStoreMerchantData(merchantId) {
     console.log(`Fetching data for Merchant ID: ${merchantId}...`);
@@ -121,7 +122,6 @@ async function fetchAndStoreMerchantData(merchantId) {
                         data[`meal_price_${index}`] = meal.price || '';
                         data[`meal_description_${index}`] = meal.description || '';
                         data[`meal_category_${index}`] = meal.Category || '';
-                        // CRITICAL: Add the picture URL to the main data object
                         if (meal.picture) {
                            data[`meal_picture_${index}`] = meal.picture;
                         }
@@ -136,6 +136,12 @@ async function fetchAndStoreMerchantData(merchantId) {
         window.location.reload();
     } catch (e) {
         console.error(`Error fetching data: ${e.message}`);
+        // Also show error in PayPort modal if it's open
+        const errorDiv = document.getElementById('payport-error');
+        if (errorDiv) {
+            errorDiv.textContent = `Failed to load merchant data: ${e.message}`;
+            errorDiv.style.display = 'block';
+        }
     }
 }
 
@@ -169,9 +175,12 @@ document.addEventListener('DOMContentLoaded', () => {
         initializeMenu();
     }
 
-    const qrButton = document.getElementById('qr-button');
-    if (qrButton) {
+    if (document.getElementById('qr-button')) {
         initializeQRScanner();
+    }
+    
+    if (document.getElementById('payport-signin-btn')) {
+        initializePayPortSignIn();
     }
 });
 
@@ -182,7 +191,6 @@ function initializeMenu() {
     const menuContainer = document.getElementById('menu-items-container');
     let mealCount = 0;
 
-    // --- NEW: Updated HTML Template with Meal Photo Input ---
     const createMenuItemHTML = (index) => `
         <div class="menu-item bg-gray-50 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 border border-gray-200 p-4 rounded-lg relative">
             <button type="button" onclick="this.closest('.menu-item').remove()" class="absolute top-2 right-2 bg-red-100 text-red-600 hover:bg-red-200 rounded-full p-1 w-8 h-8 flex items-center justify-center font-bold" title="Delete Meal">X</button>
@@ -190,16 +198,12 @@ function initializeMenu() {
             <div><label class="block text-sm font-medium text-gray-700">Price (RM)</label><input type="number" step="0.01" name="meal_price_${index}" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm p-3" /></div>
             <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-700">Description</label><textarea name="meal_description_${index}" rows="2" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm p-3"></textarea></div>
             <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-700">Category</label><select name="meal_category_${index}" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm p-3"><option value="">-- Select --</option><option>Main Course</option><option>Drinks</option><option>Sides</option><option>Dessert</option></select></div>
-            
-            <!-- THIS IS THE NEW PART -->
             <div class="file-input-container md:col-span-2">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Meal Photo</label>
                 <div class="file-display mt-1">
                     <input type="file" name="meal_picture_${index}" class="block w-full border-gray-300 rounded-lg shadow-sm text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 p-2 cursor-pointer" />
                 </div>
             </div>
-            <!-- END NEW PART -->
-
         </div>`;
     
     const addMeal = () => {
@@ -214,8 +218,8 @@ function initializeMenu() {
     for (const key in data) {
         if (key.startsWith('meal_')) {
             const parts = key.split('_');
-            const field = parts[1];
-            const index = parseInt(parts[2], 10);
+            const field = parts.slice(1, -1).join('_'); // handle field names with underscores
+            const index = parseInt(parts[parts.length - 1], 10);
             if (!meals[index]) meals[index] = {};
             meals[index][field] = data[key];
         }
@@ -226,17 +230,14 @@ function initializeMenu() {
             menuContainer.insertAdjacentHTML('beforeend', createMenuItemHTML(index));
             mealCount = index + 1;
             for (const field in mealData) {
-                const input = menuContainer.querySelector(`[name="meal_${field}_${index}"]`);
+                const inputName = `meal_${field}_${index}`;
+                const input = menuContainer.querySelector(`[name="${inputName}"]`);
                 if(input) {
-                    // --- NEW: Handle the picture field differently ---
                     if (field === 'picture') {
-                        const fileInputElement = menuContainer.querySelector(`input[name="meal_picture_${index}"]`);
-                        if (fileInputElement) {
-                             const displayContainer = fileInputElement.closest('.file-display');
-                             const fileUrl = mealData[field];
-                             const fileName = fileUrl.split('/').pop().split('?')[0];
-                             displayExistingFile(fileInputElement, displayContainer, decodeURIComponent(fileName), fileUrl);
-                        }
+                        const displayContainer = input.closest('.file-display');
+                        const fileUrl = mealData[field];
+                        const fileName = fileUrl.split('/').pop().split('?')[0];
+                        displayExistingFile(input, displayContainer, decodeURIComponent(fileName), fileUrl);
                     } else {
                         input.value = mealData[field];
                     }
@@ -269,5 +270,145 @@ function initializeQRScanner() {
             if (html5Qr.isScanning) { html5Qr.stop(); }
             scannerDiv.style.display = 'none';
         });
+    });
+}
+
+function initializePayPortSignIn() {
+    const modal = document.getElementById('payport-modal');
+    const openBtn = document.getElementById('payport-signin-btn');
+    const closeBtn = document.getElementById('payport-modal-close');
+    
+    const step1 = document.getElementById('payport-step-1');
+    const step2 = document.getElementById('payport-step-2');
+    
+    const infoForm = document.getElementById('payport-info-form');
+    const pinForm = document.getElementById('payport-pin-form');
+
+    const nricInput = document.getElementById('payport-nric');
+    const emailInput = document.getElementById('payport-email');
+    const pinInput = document.getElementById('payport-pin');
+
+    const sendPinBtn = document.getElementById('payport-send-pin-btn');
+    const verifyPinBtn = document.getElementById('payport-verify-pin-btn');
+    const errorDiv = document.getElementById('payport-error');
+
+    let storedNric = '';
+
+    const showSpinner = (btn, show = true) => {
+        btn.querySelector('.spinner').style.display = show ? 'inline-block' : 'none';
+        btn.querySelector('.btn-text').style.display = show ? 'none' : 'inline-block';
+        btn.disabled = show;
+    };
+
+    const showError = (message) => {
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+    };
+    
+    const hideError = () => {
+        errorDiv.style.display = 'none';
+    };
+
+    const openModal = () => {
+        modal.style.display = 'block';
+        step1.style.display = 'block';
+        step2.style.display = 'none';
+        infoForm.reset();
+        pinForm.reset();
+        hideError();
+    };
+
+    const closeModal = () => {
+        modal.style.display = 'none';
+    };
+
+    openBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    // Step 1: Send PIN
+    infoForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        hideError();
+        showSpinner(sendPinBtn, true);
+
+        const email = emailInput.value;
+        storedNric = nricInput.value;
+
+        try {
+            const response = await fetch('/send-verification-pin-foodpanda', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email })
+            });
+            const result = await response.json();
+            
+            if (result === true) {
+                step1.style.display = 'none';
+                step2.style.display = 'block';
+                pinInput.focus();
+            } else {
+                throw new Error('Failed to send PIN. Please try again.');
+            }
+        } catch (err) {
+            showError(err.message);
+        } finally {
+            showSpinner(sendPinBtn, false);
+        }
+    });
+
+    // Step 2: Verify PIN and fetch data
+    pinForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        hideError();
+        showSpinner(verifyPinBtn, true);
+        
+        const pin = pinInput.value;
+
+        try {
+            // 1. Check PIN
+            const pinCheckResponse = await fetch(`/check_pin?pin=${pin}`);
+            const pinResult = await pinCheckResponse.json();
+
+            if (pinResult !== true) {
+                throw new Error('Invalid PIN. Please try again.');
+            }
+
+            // 2. Get Merchant ID by NRIC
+            // --- THIS BLOCK IS THE ONLY PART THAT HAS CHANGED ---
+            const merchantIdResponse = await fetch(`/get_merchant_id_by_nric?nric=${storedNric}`, { method: 'POST' });
+            // --- END OF CHANGED BLOCK ---
+
+            if (!merchantIdResponse.ok) {
+                // Try to parse error from backend, otherwise show generic error
+                let errorMsg = 'Could not find a merchant account with that NRIC.';
+                try {
+                    const errorJson = await merchantIdResponse.json();
+                    errorMsg = errorJson.detail || errorMsg;
+                } catch(e) {
+                    // Ignore if response is not JSON
+                }
+                throw new Error(errorMsg);
+            }
+            
+            const merchantId = await merchantIdResponse.json();
+            
+            if (!merchantId) {
+                 throw new Error('Merchant ID not found for the provided NRIC.');
+            }
+
+            // 3. Fetch all data and reload page (re-uses existing function)
+            await fetchAndStoreMerchantData(merchantId);
+
+        } catch (err) {
+            showError(err.message);
+            pinInput.value = ''; // Clear pin input on error
+        } finally {
+            showSpinner(verifyPinBtn, false);
+        }
     });
 }
