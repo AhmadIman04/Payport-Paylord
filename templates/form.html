@@ -233,12 +233,8 @@
       
       <h2 class="text-2xl font-bold text-center mb-6">Sign In with PayPort</h2>
 
-      <!-- Step 1: User Details -->
+      <!-- MODIFIED: Simplified Login Step -->
       <div id="payport-step-1" class="space-y-4">
-        <div>
-          <label for="payport-nric" class="block text-sm font-medium text-gray-700">NRIC Number</label>
-          <input type="text" id="payport-nric" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" placeholder="e.g., 900101101234" />
-        </div>
         <div>
           <label for="payport-email" class="block text-sm font-medium text-gray-700">Email</label>
           <input type="email" id="payport-email" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" placeholder="you@example.com" />
@@ -247,19 +243,9 @@
           <label for="payport-password" class="block text-sm font-medium text-gray-700">PayPort Password</label>
           <input type="password" id="payport-password" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" />
         </div>
-        <button id="send-pin-button" class="w-full mt-4 py-2 bg-brand-green text-white font-semibold rounded-lg hover:bg-brand-dark-green shadow-sm hover:shadow-md transition-all duration-200 ease-in-out">Send Verification PIN</button>
+        <button id="payport-login-button" class="w-full mt-4 py-2 bg-brand-green text-white font-semibold rounded-lg hover:bg-brand-dark-green shadow-sm hover:shadow-md transition-all duration-200 ease-in-out">Sign In & Load Data</button>
       </div>
-
-      <!-- Step 2: PIN Verification -->
-      <div id="payport-step-2" class="space-y-4" style="display: none;">
-        <p class="text-center text-gray-600">A 6-digit PIN has been sent to <strong id="pin-email-display">your email</strong>. Please enter it below.</p>
-        <div>
-          <label for="payport-pin" class="block text-sm font-medium text-gray-700">Verification PIN</label>
-          <input type="text" id="payport-pin" maxlength="6" class="mt-1 text-center text-lg tracking-[0.5em] block w-full border-gray-300 rounded-lg shadow-sm sm:text-sm px-4 py-3 transition duration-150 ease-in-out focus:ring-2 focus:ring-offset-1 focus:ring-green-500 focus:border-green-500" placeholder="------" />
-        </div>
-        <button id="verify-pin-button" class="w-full mt-4 py-2 bg-brand-green text-white font-semibold rounded-lg hover:bg-brand-dark-green shadow-sm hover:shadow-md transition-all duration-200 ease-in-out">Verify & Load Data</button>
-      </div>
-
+      
       <!-- Error Message Display -->
       <div id="payport-error" class="text-red-600 text-sm mt-4 text-center font-medium" style="display: none;"></div>
     </div>
@@ -321,7 +307,6 @@
       const changeButton = document.createElement('button');
       changeButton.type = 'button';
       changeButton.textContent = 'Change';
-      // Use direct Tailwind classes instead of a custom class
       changeButton.className = 'ml-4 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold py-1 px-2 rounded';
       
       changeButton.onclick = () => {
@@ -349,7 +334,6 @@
         const changeButton = document.createElement('button');
         changeButton.type = 'button';
         changeButton.textContent = 'Change';
-        // Use direct Tailwind classes instead of a custom class
         changeButton.className = 'ml-4 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold py-1 px-2 rounded';
         
         changeButton.onclick = () => {
@@ -408,10 +392,13 @@
           return;
         }
         try {
+            // NOTE: For a real hackathon, you might need to point this to a live URL 
+            // (e.g., a Glitch, Replit, or cloud function URL) where your JSON file is hosted.
             const resp = await fetch(`/api/merchant/${id}`);
             if (!resp.ok) throw new Error(`Merchant not found (Error: ${resp.status})`);
             const data = await resp.json();
 
+            // Reset all file inputs to their default state before populating
             document.querySelectorAll('.file-input-container, .meal-photo-display').forEach(container => {
                 const input = container.querySelector('input[type="file"]');
                 if (input) {
@@ -424,11 +411,13 @@
                 }
             });
 
+            // Populate form fields from the main data object
             for (const [key, value] of Object.entries(data)) {
                 const el = document.getElementById(key);
                 if (el && el.type !== 'file' && value !== null) el.value = value;
             }
 
+            // Handle file links
             if (data.files) {
                 for (const [fileName, fileUrl] of Object.entries(data.files)) {
                     if (fileName === 'json_menu.json') continue;
@@ -437,13 +426,14 @@
                 }
             }
 
+            // Fetch and populate menu data if a menu file exists
             if (data.files && data.files['json_menu.json']) {
                 const menuResp = await fetch(data.files['json_menu.json']);
                 if (!menuResp.ok) throw new Error('Could not fetch menu data');
                 const menuData = await menuResp.json();
                 populateMenu(menuData.meals || []);
             } else {
-                populateMenu([]);
+                populateMenu([]); // Clear menu if no menu data is found
             }
         } catch (e) {
             alert("Failed to fetch merchant data: " + e.message);
@@ -469,19 +459,11 @@
       const payportModal = document.getElementById('payport-modal');
       const payportOpenBtn = document.getElementById('payport-signin-button');
       const payportCloseBtn = document.getElementById('payport-close-button');
-      const step1 = document.getElementById('payport-step-1');
-      const nricInput = document.getElementById('payport-nric');
       const emailInput = document.getElementById('payport-email');
       const passwordInput = document.getElementById('payport-password');
-      const sendPinBtn = document.getElementById('send-pin-button');
-      const step2 = document.getElementById('payport-step-2');
-      const pinDisplayEmail = document.getElementById('pin-email-display');
-      const pinInput = document.getElementById('payport-pin');
-      const verifyPinBtn = document.getElementById('verify-pin-button');
+      const payportLoginBtn = document.getElementById('payport-login-button'); // MODIFIED: Renamed button
       const errorDisplay = document.getElementById('payport-error');
       
-      let userNric = '';
-
       // --- QR Code Logic ---
       qrButton.addEventListener('click', () => {
         qrButton.style.display = 'none';
@@ -509,7 +491,7 @@
         }
       });
       
-      // --- PayPort Modal Logic ---
+      // --- PayPort Modal Logic (MODIFIED for hardcoding) ---
       const openModal = () => payportModal.style.display = 'flex';
       const closeModal = () => {
         payportModal.style.display = 'none';
@@ -519,23 +501,16 @@
       payportOpenBtn.addEventListener('click', openModal);
       payportCloseBtn.addEventListener('click', closeModal);
       payportModal.addEventListener('click', (event) => {
-        // Close modal if the overlay is clicked, but not the content inside it
         if (event.target === payportModal) closeModal();
       });
       
       const resetModal = () => {
-        step1.style.display = 'block';
-        step2.style.display = 'none';
-        nricInput.value = '';
         emailInput.value = '';
         passwordInput.value = '';
-        pinInput.value = '';
         errorDisplay.style.display = 'none';
         errorDisplay.textContent = '';
-        sendPinBtn.disabled = false;
-        sendPinBtn.textContent = 'Send Verification PIN';
-        verifyPinBtn.disabled = false;
-        verifyPinBtn.textContent = 'Verify & Load Data';
+        payportLoginBtn.disabled = false;
+        payportLoginBtn.textContent = 'Sign In & Load Data';
       };
       
       const showError = (message) => {
@@ -543,76 +518,25 @@
         errorDisplay.style.display = 'block';
       };
 
-      sendPinBtn.addEventListener('click', async () => {
-        const email = emailInput.value;
-        userNric = nricInput.value;
-        
-        if (!email || !userNric || !passwordInput.value) {
-          showError('All fields are required.');
-          return;
-        }
-        
+      // MODIFIED: Simplified login event listener
+      payportLoginBtn.addEventListener('click', async () => {
+        const merchantId = "ad4964f4-4caa-41bd-ae8e-6e8a6c629c0e";
+
+        // Show loading state
+        payportLoginBtn.disabled = true;
+        payportLoginBtn.textContent = 'Loading...';
         errorDisplay.style.display = 'none';
-        sendPinBtn.disabled = true;
-        sendPinBtn.textContent = 'Sending...';
 
         try {
-          const response = await fetch('/send-verification-pin', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: email })
-          });
-          
-          if (!response.ok) throw new Error(`Server error: ${response.statusText}`);
-          const result = await response.json();
-
-          if (result === true) {
-            step1.style.display = 'none';
-            step2.style.display = 'block';
-            pinDisplayEmail.textContent = email;
-            pinInput.focus();
-          } else {
-            throw new Error('Failed to send PIN. Please check the email address and try again.');
-          }
-        } catch (error) {
-          showError(error.message);
-          sendPinBtn.disabled = false;
-          sendPinBtn.textContent = 'Send Verification PIN';
-        }
-      });
-
-      verifyPinBtn.addEventListener('click', async () => {
-        const pin = parseInt(pinInput.value, 10);
-        if (isNaN(pin) || pinInput.value.length !== 6) {
-          showError('Please enter a valid 6-digit PIN.');
-          return;
-        }
-
-        errorDisplay.style.display = 'none';
-        verifyPinBtn.disabled = true;
-        verifyPinBtn.textContent = 'Verifying...';
-
-        try {
-          const pinResponse = await fetch(`/check_pin?pin=${pin}`);
-          if (!pinResponse.ok) throw new Error('Error checking PIN.');
-          const pinResult = await pinResponse.json();
-          if (pinResult !== true) throw new Error('The PIN you entered is incorrect.');
-
-          verifyPinBtn.textContent = 'Getting Merchant ID...';
-          const merchantIdResponse = await fetch(`/get_merchant_id_by_nric?nric=${userNric}`, { method: 'POST' });
-          if (!merchantIdResponse.ok) throw new Error('Could not find a merchant matching your NRIC.');
-          const merchantId = await merchantIdResponse.json();
-          if (!merchantId) throw new Error('No Merchant ID was returned for your NRIC.');
-
-          verifyPinBtn.textContent = 'Loading Data...';
+          // Fetch data using the hardcoded ID
           await fetchMerchantData(merchantId);
-          
+          // Close the modal on success
           closeModal();
-
         } catch (error) {
-          showError(error.message);
-          verifyPinBtn.disabled = false;
-          verifyPinBtn.textContent = 'Verify & Load Data';
+          showError(`Failed to load data. ${error.message}`);
+          // Re-enable the button on failure
+          payportLoginBtn.disabled = false;
+          payportLoginBtn.textContent = 'Sign In & Load Data';
         }
       });
     });
