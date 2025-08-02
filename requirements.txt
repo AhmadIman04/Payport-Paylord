@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+python-dotenv
+requests
+supabase
+pydantic
+jinja2
+google-generativeai
+fastapi-mail
+email-validator
